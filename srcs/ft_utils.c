@@ -1,44 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atol.c                                          :+:      :+:    :+:   */
+/*   ft_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: amurtas <amurtas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/17 12:35:26 by amurtas           #+#    #+#             */
-/*   Updated: 2026/02/04 14:47:22 by amurtas          ###   ########.fr       */
+/*   Created: 2026/02/04 13:09:24 by amurtas           #+#    #+#             */
+/*   Updated: 2026/02/04 15:59:58 by amurtas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_isspace(int c)
+#include "../includes/philo.h"
+
+int	ft_isdigit(int c)
 {
-	if ((c >= 9 && c <= 13) || c == 32)
+	if (c >= '0' && c <= '9')
 		return (1);
-	return (0);
+	else
+		return (0);
 }
 
-long	ft_atol(const char	*str)
+int	check_syntax(char *str)
 {
-	int		i;
-	long	nb;
-	int		sign;
+	int	i;
 
 	i = 0;
-	sign = 1;
-	nb = 0;
-	while (ft_isspace(str[i]))
-		i++;
 	if (str[i] == '-' || str[i] == '+')
+		i++;
+	if (!str[i])
+		return (0);
+	while (str[i])
 	{
-		if (str[i] == '-')
-			sign = -1;
+		if (!ft_isdigit(str[i]))
+			return (0);
 		i++;
 	}
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		nb = nb * 10 + str[i] - 48;
-		i++;
-	}
-	nb *= sign;
-	return (nb);
+	return (1);
 }
