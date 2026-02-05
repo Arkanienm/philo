@@ -6,7 +6,7 @@
 /*   By: amurtas <amurtas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 18:05:38 by amurtas           #+#    #+#             */
-/*   Updated: 2026/02/04 18:30:13 by amurtas          ###   ########.fr       */
+/*   Updated: 2026/02/05 17:10:26 by amurtas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,22 +70,51 @@ int	init_var(t_data	*data, t_philo	**philo)
 	}
 }
 
+long	get_time_in_ms(void)
+{
+	struct	timeval tv;
+	long	time_ms;
+	
+	time_ms = 0;
+
+	if (gettimeofday(&tv, NULL) == -1)
+		return (-1);
+	time_ms = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+	return (time_ms);
+}
+
+void	print_message(t_philo *philo, char *str)
+{
+	pthread_mutex_lock(&philo->data->write_mutex);
+	if (!philo->data->flag_dead)
+		printf("%ld %d %s\n", (get_time_in_ms() - philo->data->start_time, str), philo->id);
+	pthread_mutex_unlock(&philo->data->write_mutex);
+}
+
+int	check_death()
+
 void	*routine(void *arg)
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
 
-	pthread_mutex_lock(&philo->left_fork);
-	printf("has taken a fork");
-	pthread_mutex_lock(&philo->right_fork);
-	printf("has taken a fork");
-	
-	printf("is eating");
-	philo->last_time_eat = philo->last_time_eat - gettimeofday();
-	pthread_join(philo->handle);
+	while (!philo->data->flag_dead)
+	{
+		pthread_mutex_lock(philo->left_fork);
+		print_message(philo, "has taken a fork");
+		pthread_mutex_lock(philo->right_fork);
+		print_message(philo, "has taken a fork");
+		philo->last_time_eat = get_time_in_ms();
+		print_message(philo, "is eating");
+		usleep(philo->data->time_to_eat * 1000);
+		pthread_mutex_unlock(philo->left_fork);
+		pthread_mutex_unlock(philo->right_fork);
+		print_message(philo, "is thinking");
+		usleep(philo->data->time_to_sleep * 1000);
+		print_message(philo, "is thinking");
+	}
 }
-
 int	main(int argc, char **argv)
 {
 	t_data	data;
