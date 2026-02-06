@@ -6,7 +6,7 @@
 /*   By: amurtas <amurtas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 18:05:38 by amurtas           #+#    #+#             */
-/*   Updated: 2026/02/06 02:13:04 by amurtas          ###   ########.fr       */
+/*   Updated: 2026/02/06 13:42:27 by amurtas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ int	init_var(t_data	*data, t_philo	**philo)
 		(*philo)[i].right_fork = &data->fork[(i + 1) % data->num_philo];
 		i++;
 	}
+	return (1);
 }
 
 long	get_time_in_ms(void)
@@ -87,13 +88,35 @@ void	print_message(t_philo *philo, char *str)
 {
 	pthread_mutex_lock(&philo->data->write_mutex);
 	if (!philo->data->flag_dead)
-		printf("%ld %d %s\n", (get_time_in_ms() - philo->data->start_time, str), philo->id);
+		printf("%ld %d %s\n", (get_time_in_ms() - philo->data->start_time), philo->id, str);
 	pthread_mutex_unlock(&philo->data->write_mutex);
 }
 
-int	check_death(void)
+int	check_death(t_philo *philo)
 {
+	int	dead_val;
 	
+	pthread_mutex_lock(&philo->data->dead_mutex);
+	dead_val = philo->data->flag_dead;
+	pthread_mutex_unlock(&philo->data->dead_mutex);
+	return(dead_val);
+}
+
+int	ft_usleep_secure(int time, t_philo *philo)
+{
+	int	i;
+	int	end;
+
+	i = get_time_in_ms();
+	end = i + time;
+	while (i < end)
+	{
+		i = get_time_in_ms();
+		if (check_death(philo))
+			return (0);
+		usleep(500);
+	}
+	return (1);
 }
 
 void	*routine(void *arg)
@@ -102,32 +125,101 @@ void	*routine(void *arg)
 
 	philo = (t_philo *)arg;
 
-	while (!philo->data->flag_dead)
+		if (philo->data->num_philo == 1)
+			{
+				pthread_mutex_lock(philo->left_fork);
+				print_message(philo, "has taken a fork");
+				ft_usleep_secure(philo->data->time_to_die, philo);
+				pthread_mutex_unlock(philo->left_fork);
+				return (NULL);
+			}
+	while (!check_death(philo))
 	{
-		pthread_mutex_lock(philo->left_fork);
-		print_message(philo, "has taken a fork");
-		pthread_mutex_lock(philo->right_fork);
-		print_message(philo, "has taken a fork");
+		if (philo->id %2 == 0)
+		{
+			pthread_mutex_lock(philo->right_fork);
+			print_message(philo, "has taken a fork");
+			pthread_mutex_lock(philo->left_fork);
+			print_message(philo, "has taken a fork");
+		}
+		else
+		{
+			pthread_mutex_lock(philo->left_fork);
+			print_message(philo, "has taken a fork");
+			pthread_mutex_lock(philo->right_fork);
+			print_message(philo, "has taken a fork");
+		}
+		pthread_mutex_lock(&philo->lock_time_eat);
 		philo->last_time_eat = get_time_in_ms();
+		philo->eat_count++;
+		pthread_mutex_unlock(&philo->lock_time_eat);
 		print_message(philo, "is eating");
-		usleep(philo->data->time_to_eat * 1000);
+		ft_usleep_secure(philo->data->time_to_eat, philo);
 		pthread_mutex_unlock(philo->left_fork);
 		pthread_mutex_unlock(philo->right_fork);
-		print_message(philo, "is thinking");
-		usleep(philo->data->time_to_sleep * 1000);
+		print_message(philo, "is sleeping");
+		ft_usleep_secure(philo->data->time_to_sleep, philo);
 		print_message(philo, "is thinking");
 	}
+	return (NULL);
 }
+
+void	monitor(t_data *data, t_philo *philo)
+{
+	int	i;
+	int	elapsed_time;
+	int	finished_eating;
+
+	while (1)
+	{
+		i = 0;
+		finished_eating = 0;
+		while (i < data->num_philo)
+		{
+			pthread_mutex_lock(&philo[i].lock_time_eat);
+			elapsed_time = get_time_in_ms() - philo[i].last_time_eat;
+			if (elapsed_time > data->time_to_die)
+			{
+				pthread_mutex_unlock(&philo[i].lock_time_eat);
+				print_message(&philo[i], "died");
+				pthread_mutex_lock(&data->dead_mutex);
+				data->flag_dead = 1;
+				pthread_mutex_unlock(&data->dead_mutex);
+				return ;	
+			}
+			if (data->times_must_eat != -1 && philo[i].eat_count >= data->times_must_eat)
+				finished_eating++;
+			pthread_mutex_unlock(&philo[i].lock_time_eat);
+			i++;
+		}
+		if (data->times_must_eat != -1 && data->num_philo == finished_eating)
+		{
+				pthread_mutex_lock(&data->dead_mutex);
+				data->flag_dead = 1;
+				pthread_mutex_unlock(&data->dead_mutex);
+				return;
+		}
+		usleep(1000);
+	}
+}
+
 int	main(int argc, char **argv)
 {
 	t_data	data;
 	t_philo	*philo;
+	int	i;
 
+	i = 0;
 	if (argc < 5 || argc > 6)
 		return (0);
 	if (!parsing(argv, &data))
 		return (0);
 	if (!init_var(&data, &philo))
 		return (0);
+	while (&philo[i])
+	{
+		/* code */
+	}
+	
 	return (0);
 }
