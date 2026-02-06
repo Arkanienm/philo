@@ -6,7 +6,7 @@
 /*   By: amurtas <amurtas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 18:05:38 by amurtas           #+#    #+#             */
-/*   Updated: 2026/02/05 17:10:26 by amurtas          ###   ########.fr       */
+/*   Updated: 2026/02/06 02:13:04 by amurtas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,10 @@ void	print_message(t_philo *philo, char *str)
 	pthread_mutex_unlock(&philo->data->write_mutex);
 }
 
-int	check_death()
+int	check_death(void)
+{
+	
+}
 
 void	*routine(void *arg)
 {
