@@ -6,7 +6,7 @@
 /*   By: amurtas <amurtas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 18:05:38 by amurtas           #+#    #+#             */
-/*   Updated: 2026/02/06 13:42:27 by amurtas          ###   ########.fr       */
+/*   Updated: 2026/02/06 18:38:32 by amurtas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,10 +216,28 @@ int	main(int argc, char **argv)
 		return (0);
 	if (!init_var(&data, &philo))
 		return (0);
-	while (&philo[i])
+	data.start_time = get_time_in_ms();
+	while (i < data.num_philo)
 	{
-		/* code */
+		pthread_create(&philo[i].handle, NULL, routine, &philo[i]);
+		i++;
 	}
-	
+	monitor(&data, philo);
+	i = 0;
+	while (i < data.num_philo)
+	{
+		pthread_join(philo[i].handle, NULL);
+		i++;
+	}
+	pthread_mutex_destroy(&data.dead_mutex);
+	pthread_mutex_destroy(&data.write_mutex);
+	while (i < data.num_philo)
+	{
+		pthread_mutex_destroy(&philo[i].lock_time_eat);
+		pthread_mutex_destroy(&data.fork[i]);
+		i++;
+	}
+	free(data.fork);
+	free(philo);
 	return (0);
 }
