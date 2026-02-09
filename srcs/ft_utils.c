@@ -6,7 +6,7 @@
 /*   By: amurtas <amurtas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 13:09:24 by amurtas           #+#    #+#             */
-/*   Updated: 2026/02/06 02:12:29 by amurtas          ###   ########.fr       */
+/*   Updated: 2026/02/09 18:36:54 by amurtas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,27 @@ int	check_syntax(char *str)
 		i++;
 	}
 	return (1);
+}
+
+long	get_time_in_ms(void)
+{
+	struct timeval	tv;
+	long			time_ms;
+
+	time_ms = 0;
+	if (gettimeofday(&tv, NULL) == -1)
+		return (-1);
+	time_ms = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+	return (time_ms);
+}
+
+void	print_message(t_philo *philo, char *str)
+{
+	pthread_mutex_lock(&philo->data->write_mutex);
+	if (!philo->data->flag_dead)
+	{
+		printf("%ld %d %s\n", (get_time_in_ms() - philo->data->start_time),
+			philo->id, str);
+	}
+	pthread_mutex_unlock(&philo->data->write_mutex);
 }

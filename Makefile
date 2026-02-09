@@ -3,7 +3,8 @@ NAME        = philo
 CC          = cc
 CFLAGS      = -Wall -Wextra -Werror -g
 
-SRCS        = srcs/philo.c srcs/ft_atol.c srcs/ft_utils.c
+SRCS        = srcs/philo.c srcs/ft_atol.c srcs/ft_utils.c srcs/philo_manage.c \
+			  srcs/philo_utils.c srcs/philo_monitor.c
 
 
 OBJS        = $(SRCS:.c=.o)
