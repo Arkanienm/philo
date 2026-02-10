@@ -7,15 +7,21 @@ SRCS        = srcs/philo.c srcs/ft_atol.c srcs/ft_utils.c srcs/philo_manage.c \
 			  srcs/philo_utils.c srcs/philo_monitor.c
 
 
-OBJS        = $(SRCS:.c=.o)
+OBJ_DIR     = obj/
+
+OBJS        = $(SRCS:%.c=$(OBJ_DIR)%.o)
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(OBJS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+
+$(OBJ_DIR)%.o: %.c
+		@mkdir -p $(dir $@)
+		$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS)
+	rm -rf $(OBJ_DIR)
 
 fclean: clean
 	rm -f $(NAME)

@@ -6,7 +6,7 @@
 /*   By: amurtas <amurtas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 18:05:38 by amurtas           #+#    #+#             */
-/*   Updated: 2026/02/10 14:20:55 by amurtas          ###   ########.fr       */
+/*   Updated: 2026/02/10 14:37:36 by amurtas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,21 @@ void	thread_management(t_data *data, t_philo *philo)
 	free(philo);
 }
 
+int	ft_error(t_data *data, int argc, char **argv)
+{
+	if (argc < 5 || argc > 6)
+	{
+		printf("Error\n");
+		return (0);
+	}
+	if (!parsing(argv, data))
+	{
+		printf("Error\n");
+		return (0);
+	}
+	return (1);
+}
+
 int	main(int argc, char **argv)
 {
 	t_data	data;
@@ -73,14 +88,18 @@ int	main(int argc, char **argv)
 	int		i;
 
 	i = 0;
-	if (argc < 5 || argc > 6)
-		return (0);
-	if (!parsing(argv, &data))
+	if (!ft_error(&data, argc, argv))
 		return (0);
 	if (!init_var(&data, &philo))
+	{
+		printf("Error\n");
+		if (data.fork)
+			free(data.fork);
+		if (philo)
+			free(philo);
 		return (0);
+	}
 	data.start_time = get_time_in_ms();
-	i = 0;
 	while (i < data.num_philo)
 	{
 		philo[i].last_time_eat = data.start_time;
