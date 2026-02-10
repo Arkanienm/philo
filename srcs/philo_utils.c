@@ -6,7 +6,7 @@
 /*   By: amurtas <amurtas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 18:05:38 by amurtas           #+#    #+#             */
-/*   Updated: 2026/02/09 18:44:32 by amurtas          ###   ########.fr       */
+/*   Updated: 2026/02/10 12:57:37 by amurtas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ int	init_var(t_data	*data, t_philo	**philo)
 	}
 	pthread_mutex_init(&data->write_mutex, NULL);
 	pthread_mutex_init(&data->dead_mutex, NULL);
+	data->flag_dead = 0;
 	init_philo(data, philo);
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: amurtas <amurtas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 18:05:38 by amurtas           #+#    #+#             */
-/*   Updated: 2026/02/09 18:38:42 by amurtas          ###   ########.fr       */
+/*   Updated: 2026/02/10 13:10:58 by amurtas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,7 @@ void	thread_management(t_data *data, t_philo *philo)
 	monitor(data, philo);
 	i = 0;
 	while (i < data->num_philo)
-	{
-		pthread_join(philo[i].handle, NULL);
-		i++;
-	}
+		pthread_join(philo[i++].handle, NULL);
 	i = 0;
 	pthread_mutex_destroy(&data->dead_mutex);
 	pthread_mutex_destroy(&data->write_mutex);

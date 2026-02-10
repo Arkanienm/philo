@@ -6,7 +6,7 @@
 /*   By: amurtas <amurtas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 18:05:38 by amurtas           #+#    #+#             */
-/*   Updated: 2026/02/09 18:39:10 by amurtas          ###   ########.fr       */
+/*   Updated: 2026/02/10 13:07:42 by amurtas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int	routine_check(t_philo *philo, t_data *data, int i)
 {
 	int	elapsed_time;
+
 	pthread_mutex_lock(&philo[i].lock_time_eat);
 	elapsed_time = get_time_in_ms() - philo[i].last_time_eat;
 	if (elapsed_time > data->time_to_die)

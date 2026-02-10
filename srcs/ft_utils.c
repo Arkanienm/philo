@@ -6,7 +6,7 @@
 /*   By: amurtas <amurtas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 13:09:24 by amurtas           #+#    #+#             */
-/*   Updated: 2026/02/09 18:36:54 by amurtas          ###   ########.fr       */
+/*   Updated: 2026/02/10 13:08:45 by amurtas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,12 @@ long	get_time_in_ms(void)
 void	print_message(t_philo *philo, char *str)
 {
 	pthread_mutex_lock(&philo->data->write_mutex);
+	pthread_mutex_lock(&philo->data->dead_mutex);
 	if (!philo->data->flag_dead)
 	{
 		printf("%ld %d %s\n", (get_time_in_ms() - philo->data->start_time),
 			philo->id, str);
 	}
+	pthread_mutex_unlock(&philo->data->dead_mutex);
 	pthread_mutex_unlock(&philo->data->write_mutex);
 }
