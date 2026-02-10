@@ -6,7 +6,7 @@
 /*   By: amurtas <amurtas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 18:05:38 by amurtas           #+#    #+#             */
-/*   Updated: 2026/02/10 14:25:15 by amurtas          ###   ########.fr       */
+/*   Updated: 2026/02/10 15:37:28 by amurtas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ int	parsing(char **argv, t_data *data)
 	data->times_must_eat = -1;
 	if (argv[5])
 		data->times_must_eat = (int)ft_atol(argv[5]);
+	if (argv[5] && data->times_must_eat <= 0)
+		return (0);
 	if (data->num_philo <= 0 || data->time_to_die <= 0 || data->time_to_eat <= 0
 		|| data->time_to_sleep <= 0)
 		return (0);

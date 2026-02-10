@@ -6,7 +6,7 @@
 /*   By: amurtas <amurtas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 13:09:24 by amurtas           #+#    #+#             */
-/*   Updated: 2026/02/10 13:08:45 by amurtas          ###   ########.fr       */
+/*   Updated: 2026/02/10 15:38:18 by amurtas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ int	check_syntax(char *str)
 			return (0);
 		i++;
 	}
+	if (i >= 11)
+		return (0);
 	return (1);
 }
 
